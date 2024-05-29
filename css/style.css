@@ -1,0 +1,42 @@
+@charset "utf-8";
+
+@font-face {
+    font-family: 'MoveSans-Bold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/MoveSans-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+  font-family: 'Ownglyph_ryuttung-Rg';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_ryuttung-Rg.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
+
+ul,ol { padding: 0; list-style: none;}
+
+
+body    {background: #ffee01;}
+#wrap   {width: 100%; min-width: 340px; margin: 0; padding: 0; background: #ffee01;}
+header  {margin-bottom: 10px; padding: 10px 0; width: 100%; background-color: #222; border-radius: 10px; }
+header h1  {font-size: 30px; color: #fff; font-family: 'MoveSans-Bold'; text-align: center; letter-spacing: 5px; text-shadow: 0 0 3px #fff;}
+
+section   {padding: 10px; width: 100%; min-width: 340px;  border: 1px solid #222; box-shadow: 0 0 3px #222; box-sizing: border-box;}
+section .inputBox   {display: flex; flex-flow: row nowrap; justify-content: space-around; width: 100%; }
+section .inputBox input   {width: calc(100% - 50px); height: 40px; box-sizing: border-box;}
+section .inputBox button   {margin-left: 10px; width: 40px; height: 40px; line-height: 40px; color: #fff; font-size: 25px; font-family: 'MoveSans-Bold'; background: #222; border-radius: 4px;}
+
+section .listBox    { width: 100%; height: 500px; overflow: scroll; }
+section .listBox ul  {width: 100%; display: flex; flex-direction: column; }
+section .listBox ul li.list  { display: flex; flex-flow: row nowrap; justify-content: space-between;  width: 100%;}
+section .listBox ul li.list input[type="checkbox"].success   {margin-top: 8px; width: 20px; height: 20px; appearance: none; border-radius: 50%; border: 1px solid #666666; background: #fff;}
+section .listBox ul li.list input[type="checkbox"].success:checked   { border: none;  background: url(./../images/check.png) no-repeat center; background-size: contain;}
+
+section .listBox ul li.list input[type="checkbox"].success:checked~span.text    {text-decoration: line-through;}  
+
+section .listBox ul li.list span.text  {display: inline-block; width: calc(100% - 80px); height: 40px; font-family: 'Ownglyph_ryuttung-Rg'; font-size: 20px; text-align: left; line-height: 40px;}
+section .listBox ul li.list button  {width: 40px; height: 40px; text-indent: -9999px; background: url(./../images/trash.png) no-repeat center; border: none; background-size: 23px;}
