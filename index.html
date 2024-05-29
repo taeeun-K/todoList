@@ -35,7 +35,25 @@
 
 
   <script>
-  // input 입력요소 이벤트리스너 등록 및 데이터 배열화
+    /*
+
+  //로컬스토리지 배열저장
+  const savedTodoList = JSON.parse(localStorage.getItem('saved-items'));
+  console.log(savedTodoList)
+
+  if (savedTodoList) { // 로컬에서 데이터 가져오기
+      for(let i = 0; i < savedTodoList.length; i++){
+          createTodo(savedTodoList[i])
+      }
+  }
+
+
+  function createTodo (storageData) { // 할 일 추가 기능
+    let todoContents = savedTodoList.value;
+    if (storageData) {
+        todoContents = storageData.contents
+    }
+
   const writeBox = document.querySelector('input.writeText');
   const addBtn = document.querySelector('button.add');
   const todoListBox = document.querySelector('.listBox ul');
@@ -46,14 +64,16 @@
 
   const setTodos = (newTodos) => {
       todos = newTodos;
+      saveItemsFn();
   }
 
   const getAllTodos = () => {
       return todos;
+
+      saveItemsFn();
   }
 
 
-  // dpdpdpdpd
   
   // 추가
   const appendTodos = (text) => {
@@ -68,6 +88,79 @@
 
       setTodos(newTodos)
       addTodo();
+
+      saveItemsFn();
+  }
+
+};
+
+  function saveItemsFn () { // 로컬에 데이터 저장하기
+    const todoList = document.querySelector('.listBox ul');
+    const saveItems = [];
+    for (let i = 0; i < todoList.children.length; i++){
+        const todoObj = {
+            contents: todoList.children[i].querySelector('span').textContent,
+            complete: todoList.children[i].classList.contains('complete')
+        };
+        saveItems.push(todoObj);
+    }
+
+    if (saveItems.length === 0) {
+        localStorage.removeItem('saved-items')
+    }else{
+        localStorage.setItem('saved-items', JSON.stringify(saveItems));
+    }
+}
+
+*/
+
+
+
+//여기부터  로컬아님  로컬존나어렵넹 ㅎㅅㅎ..
+
+  // input 입력요소 이벤트리스너 등록 및 데이터 배열화
+  const writeBox = document.querySelector('input.writeText');
+  const addBtn = document.querySelector('button.add');
+  const todoListBox = document.querySelector('.listBox ul');
+  const delBtn = document.querySelector('.trashBtn');
+
+  let todos = [];
+  let id = 0;
+
+  
+  
+
+  const setTodos = (newTodos) => {
+      todos = newTodos;
+      
+
+      localStorage.setItem('jsonItem', JSON.stringify(newTodos));
+      // saveItemsFn();
+  }
+
+  const getAllTodos = () => {
+      return todos;
+
+      // saveItemsFn();
+  }
+
+
+  
+  // 추가
+  const appendTodos = (text) => {
+      const newId = id++;
+      const newTodos = getAllTodos().concat({id: newId, isCompleted: false, content: text })
+      // const newTodos = [...getAllTodos(), {id: newId, isCompleted: false, content: text }]
+
+      if(text.length < 1 ){
+        window.alert('입력내용이 없음~');
+        return false;
+      }
+
+      setTodos(newTodos)
+      addTodo();
+
+      // saveItemsFn();
   }
 
   // 삭제
@@ -75,7 +168,9 @@
       console.log(todoId);
       const newTodos = getAllTodos().filter(todo => todo.id !== todoId );
       setTodos(newTodos);
-      addTodo()
+      addTodo();
+
+      // saveItemsFn();
   }
 
   // 완료
@@ -83,6 +178,8 @@
       const newTodos = getAllTodos().map(todo => todo.id === todoId ? {...todo,  isCompleted: !todo.isCompleted} : todo )
       setTodos(newTodos);
       addTodo();
+
+      // saveItemsFn();
   }
 
 
@@ -141,11 +238,18 @@
             appendTodos(writeBox.value); writeBox.value ='';
             console.log('666')
       })
+
+
+      jsonResult = JSON.parse(localStorage.getItem('jsonItem'));
+      if(!jsonResult) jsonResult = []
+      setTodos(jsonResult)
+      addTodo();
   }
 
 
   //페이지 로드와 동시 실행
-  init()
+  init();
+  // saveItemsFn();
 
   </script>
 </body>
