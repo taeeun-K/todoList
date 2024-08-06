@@ -3,256 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TO DO LIST by taeeun</title>
   <link rel="stylesheet" href="./css/style.css">
+  <title>탱's todo-List</title>
 </head>
 <body>
+  
+  <div class="todo-container">
+    <h1>탱탱구</h1>
 
-  <div id="wrap">
-    <header>
-      <h1>To Do List</h1>
-    </header>
+    <div id="inputField">
+      <input type="text" name="" id="todoInput" placeholder="투두 리스트" onkeydown="keyCodeCheck()">
+      <button type="button" id="addBtn">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
 
-    <section>
-      <div class="inputBox">
-        <input type="text" id="item" class="writeText" autofocus="true">  
-        <label for=""></label>
-        <button type="button" class="add">+</button>
-      </div>
-      <div class="listBox">
-        <ul>
+    <ul id="todoList">
 
-          <!-- li 동적생성됨 -->
-          <!-- <li  class="list">
-            <input type="checkbox" name="list" id="list" class="success">
-            <span class="text">코딩연습하기</span>
-            <button type="button" class="trashBtn">휴지통</button>
-          </li> -->
-        </ul>
-      </div>
+    </ul>
 
-      <button class="allClear">전체삭제</button>
-    </section>
+    <div class="all-delete-wrap">
+      <button type="button" class="all-del-btn" onclick="deleteAll()">전체삭제</button>
+    </div>
   </div>
 
 
+  
   <script>
-    /*
+    const todoInput = document.querySelector('#todoInput'); // 투두리스트 작성 input요소
+    const addBtn = document.querySelector('#addBtn'); // +버튼
 
-  //로컬스토리지 배열저장
-  const savedTodoList = JSON.parse(localStorage.getItem('saved-items'));
-  console.log(savedTodoList)
 
-  if (savedTodoList) { // 로컬에서 데이터 가져오기
-      for(let i = 0; i < savedTodoList.length; i++){
-          createTodo(savedTodoList[i])
+    const saveTodoList = JSON.parse(localStorage.getItem('saved-Todos'));
+    console.log(saveTodoList + '*****************************************')
+
+
+    if(saveTodoList){// 로컬에서 데이터 가져오기
+      for(let i = 0; i < saveTodoList.length; i++){
+        createTodo(saveTodoList[i])
       }
-  }
+    }
 
 
-  function createTodo (storageData) { // 할 일 추가 기능
-    let todoContents = savedTodoList.value;
-    if (storageData) {
+    function keyCodeCheck() { //엔터키로 추가 기능
+      if(window.event.keyCode === 13 && todoInput.value !== ''){
+        createTodo(); //엔터키에서 할일추가 함수 호출
+      }
+    }
+
+    addBtn.addEventListener('click',() => { // +버튼 추가 기능
+      if(todoInput.value !== ''){
+        createTodo(); // +버튼 클릭시 할일추가 함수 호출
+      }
+    })
+
+
+    function createTodo (storageData){ // 할일(리스트) 추가함수
+
+      let todoContents = todoInput.value;
+      if(storageData){//이거 없어지면 스토리지 contents 유지안됨~
         todoContents = storageData.contents
-    }
-
-  const writeBox = document.querySelector('input.writeText');
-  const addBtn = document.querySelector('button.add');
-  const todoListBox = document.querySelector('.listBox ul');
-  const delBtn = document.querySelector('.trashBtn');
-
-  let todos = [];
-  let id = 0;
-
-  const setTodos = (newTodos) => {
-      todos = newTodos;
-      saveItemsFn();
-  }
-
-  const getAllTodos = () => {
-      return todos;
-
-      saveItemsFn();
-  }
-
-
-  
-  // 추가
-  const appendTodos = (text) => {
-      const newId = id++;
-      const newTodos = getAllTodos().concat({id: newId, isCompleted: false, content: text })
-      // const newTodos = [...getAllTodos(), {id: newId, isCompleted: false, content: text }]
-
-      if(text.length < 1 ){
-        window.alert('입력내용이 없음~');
-        return false;
       }
 
-      setTodos(newTodos)
-      addTodo();
 
-      saveItemsFn();
-  }
+      const todoBox = document.querySelector('#todoList'); //li를 담을 ul요소
+      const newLi = document.createElement('li'); //li생성함
+      const newBtn = document.createElement('button'); //button 생성함 (li안에 체크박스영역)
+      const newSpan = document.createElement('span'); //span 생성함 (li안에 텍스트영역)
+      const delBtn = document.createElement('a'); //button 생성 (li안에 휴지통버튼)
 
-};
+      newLi.appendChild(newBtn); //li안에 체크박스 담기
+      newLi.appendChild(newSpan); //li안에 텍스트영역 담기
+      newLi.appendChild(delBtn); //li안에 휴지통 버튼 담기
 
-  function saveItemsFn () { // 로컬에 데이터 저장하기
-    const todoList = document.querySelector('.listBox ul');
-    const saveItems = [];
-    for (let i = 0; i < todoList.children.length; i++){
+      console.log(newLi); //생성확인
+
+      newBtn.classList.add('success'); //할일완료 체크박스 버튼의 클래스 붙이기
+      delBtn.classList.add('del');//휴지통버튼에 del클래스 붙여주기
+          
+      newSpan.textContent = todoContents; // li의 텍스트영역에 input의 value값 담기
+
+      todoBox.appendChild(newLi); //ul 자식요소로 li붙이기
+      console.log(todoBox); //ul+li 생성확인
+
+      todoInput.value = ''; //value값에 빈 문자열 담기
+
+
+      newBtn.addEventListener('click', () => {
+        newLi.classList.toggle('complete'); //체크박스 클릭 -> 완료 클래스 토글
+
+        saveTodoFn();
+      })
+
+      delBtn.addEventListener('click', (evt) => {
+        evt.preventDefault();
+        newLi.remove();  // 휴지통버튼 클릭시 리스트 삭제
+        
+        saveTodoFn();
+      });
+
+      console.log(todoBox.children[0].querySelector('span').textContent) //로컬저장에서 리스트의 텍스트를 가져오기위해 ~
+    
+      if (storageData && storageData.complete === true){
+        newLi.classList.add('complete');
+      }
+
+      saveTodoFn();
+    };
+
+
+
+    function deleteAll(){ //전체삭제버튼 함수
+      const liList = document.querySelectorAll('#todoList li');
+
+      for( let i = 0; i < liList.length; i++ ){
+        liList[i].remove();
+      }
+
+      saveTodoFn();
+    };
+
+
+    function saveTodoFn(){ //로컬에 데이터 저장
+      const saveTodos = []; //빈배열 할당하기
+      const todoBox = document.querySelector('#todoList'); //리스트박스 ul요소
+
+      for(let i = 0; i < todoBox.children.length; i++){
         const todoObj = {
-            contents: todoList.children[i].querySelector('span').textContent,
-            complete: todoList.children[i].classList.contains('complete')
-        };
-        saveItems.push(todoObj);
-    }
-
-    if (saveItems.length === 0) {
-        localStorage.removeItem('saved-items')
-    }else{
-        localStorage.setItem('saved-items', JSON.stringify(saveItems));
-    }
-}
-
-*/
-
-
-
-//여기부터  로컬아님  로컬존나어렵넹 ㅎㅅㅎ..
-
-  // input 입력요소 이벤트리스너 등록 및 데이터 배열화
-  const writeBox = document.querySelector('input.writeText');
-  const addBtn = document.querySelector('button.add');
-  const todoListBox = document.querySelector('.listBox ul');
-  const delBtn = document.querySelector('.trashBtn');
-
-  let todos = [];
-  let id = 0;
-
-  
-  
-
-  const setTodos = (newTodos) => {
-      todos = newTodos;
-      
-
-      localStorage.setItem('jsonItem', JSON.stringify(newTodos));
-      // saveItemsFn();
-  }
-
-  const getAllTodos = () => {
-      return todos;
-
-      // saveItemsFn();
-  }
-
-
-  
-  // 추가
-  const appendTodos = (text) => {
-      const newId = id++;
-      const newTodos = getAllTodos().concat({id: newId, isCompleted: false, content: text })
-      // const newTodos = [...getAllTodos(), {id: newId, isCompleted: false, content: text }]
-
-      if(text.length < 1 ){
-        window.alert('입력내용이 없음~');
-        return false;
+          contents: todoBox.children[i].querySelector('span').textContent, //리스트 목록
+          complete: todoBox.children[i].classList.contains('complete') //완료표시된 리스트
+        }
+        saveTodos.push(todoObj); //할당한 빈 배열에 todoObj 배열추가
       }
 
-      setTodos(newTodos)
-      addTodo();
+      // saveTodoFn 이라는 이름으로 함수를 생성합니다.
+      // 여러개의 데이터를 담을 빈 배열 을 변수에 저장합니다.
+      // 인덱스 값으로 가져오고 있는걸 확인 -> 반복문 사용
+      // 배열을 추가하는 push() 메소드 사용
+      //console.log(JSON.stringify(saveItems)); //생성리스트, 완료표시 배열 저장되는지 문자열로 변환확인
 
-      // saveItemsFn();
-  }
-
-  // 삭제
-  const deleteTodo = (todoId) => {
-      console.log(todoId);
-      const newTodos = getAllTodos().filter(todo => todo.id !== todoId );
-      setTodos(newTodos);
-      addTodo();
-
-      // saveItemsFn();
-  }
-
-  // 완료
-  const completeTodo = (todoId) => {
-      const newTodos = getAllTodos().map(todo => todo.id === todoId ? {...todo,  isCompleted: !todo.isCompleted} : todo )
-      setTodos(newTodos);
-      addTodo();
-
-      // saveItemsFn();
-  }
+      // 확인 끝났으면 진짜 로컬스토리지에 저장!
+      if(saveTodos.length === 0){
+        localStorage.removeItem('saved-Todos')
+      }else{
+        localStorage.setItem('saved-Todos', JSON.stringify(saveTodos));
+      }
+    };
 
 
-  // 리스트요소생성
-  const addTodo = () => {
-      todoListBox.innerHTML = ''; //todoListBox 요소 안의 HTML 초기화
-      const allTodos = getAllTodos() // todos 배열 가져오기
-
-      allTodos.forEach(todo => { 
-        //li 동적생성
-          const todoListItem = document.createElement('li');
-          todoListItem.classList.add('list');
-
-          // todoListItem.setAttribute('data-id', todo.id );
-
-          //체크박스 동적생성
-          const checkboxElem = document.createElement('input');
-          checkboxElem.classList.add('success');
-          checkboxElem.type = 'checkbox';
-          checkboxElem.class = 'success';
-
-          //텍스트영역 동적생성
-          const todoElem = document.createElement('span');
-          todoElem.classList.add('text');
-          todoElem.innerText = todo.content;
-
-          //휴지통버튼 동적생성
-          const delBtnElem = document.createElement('button');
-          delBtnElem.classList.add('trashBtn');
-          delBtnElem.addEventListener('click', () =>  deleteTodo(todo.id))
-
-          //퀘스트완료????????????????????????????????????????????????????????????
-          if(todo.isChecked) {
-              todoListItem.classList.add('checked');
-          }
-
-          //생성요소 같다붙임
-          todoListItem.appendChild(checkboxElem);
-          todoListItem.appendChild(todoElem);
-          todoListItem.appendChild(delBtnElem);
-          todoListBox.appendChild(todoListItem);
-      })
-  }
-
-
-  //엔터키, 버튼클릭시 value값 리스트 생성과 동시에 인풋박스 value 제거
-  const init = () => {
-      writeBox.addEventListener('keypress', (e) =>{
-          if( e.key === 'Enter' ){
-              appendTodos(e.target.value); writeBox.value ='';
-          }
-
-      })
-
-      addBtn.addEventListener('click', () =>{
-            appendTodos(writeBox.value); writeBox.value ='';
-            console.log('666')
-      })
-
-
-      jsonResult = JSON.parse(localStorage.getItem('jsonItem'));
-      if(!jsonResult) jsonResult = []
-      setTodos(jsonResult)
-      addTodo();
-  }
-
-
-  //페이지 로드와 동시 실행
-  init();
-  // saveItemsFn();
 
   </script>
+
+
+<!-- https://velog.io/@seoyaon/Javascript-Todo-List-%EB%A7%8C%EB%93%A4%EA%B8%B0 -->
 </body>
 </html>
